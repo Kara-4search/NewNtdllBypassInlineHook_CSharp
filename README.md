@@ -59,7 +59,7 @@ Blog link: working on it
 - Works on both x64/x86
 
 ## Update history
-- NONE
+- Restruct Code - 20210903
 
 ## Reference link:
 	1. https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea

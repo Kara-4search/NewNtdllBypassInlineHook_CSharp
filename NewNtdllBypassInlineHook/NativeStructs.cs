@@ -40,7 +40,7 @@ namespace NewNtdllBypassInlineHook
         public struct IMAGE_NT_HEADERS64
         {
             [FieldOffset(0)]
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public char[] Signature;
 
             [FieldOffset(24)]

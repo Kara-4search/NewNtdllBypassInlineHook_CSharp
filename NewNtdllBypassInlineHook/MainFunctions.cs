@@ -12,54 +12,26 @@ namespace NewNtdllBypassInlineHook
 {
     class MainFunctions
     {
-        private static Object FindObjectAddress(IntPtr BaseAddress, Object StructObject, IntPtr CurrentHandle)
-        {
-            IntPtr ObjAllocMemAddr = Marshal.AllocHGlobal(Marshal.SizeOf(StructObject.GetType()));
-            RtlZeroMemory(ObjAllocMemAddr, Marshal.SizeOf(StructObject.GetType()));
-
-            uint getsize = 0;
-            bool return_status = NtReadVirtualMemory(
-                CurrentHandle,
-                BaseAddress,
-                ObjAllocMemAddr,
-                (uint)Marshal.SizeOf(StructObject),
-                ref getsize
-             );
-
-            StructObject = Marshal.PtrToStructure(ObjAllocMemAddr, StructObject.GetType());
-            return StructObject;
-        }
-
         private static Object Locate_Image_Export_Directory(IntPtr BaseAddress, IntPtr CurrentHandle)
         {
             int IMAGE_DIRECTORY_ENTRY_EXPORT = 0;
-            IMAGE_DOS_HEADER IMAGE_DOS_HEADER_instance = new IMAGE_DOS_HEADER();
-            IMAGE_DOS_HEADER_instance = (IMAGE_DOS_HEADER)FindObjectAddress(
+
+            IMAGE_DOS_HEADER IMAGE_DOS_HEADER_instance = (IMAGE_DOS_HEADER)Marshal.PtrToStructure(
                 BaseAddress,
-                IMAGE_DOS_HEADER_instance,
-                CurrentHandle);
+                typeof(IMAGE_DOS_HEADER));
 
-            IntPtr IMAGE_NT_HEADER64_address = (IntPtr)(BaseAddress.ToInt64() + (int)IMAGE_DOS_HEADER_instance.e_lfanew);
-            IMAGE_NT_HEADERS64 IMAGE_NT_HEADER64_instance = new IMAGE_NT_HEADERS64();
-            IMAGE_NT_HEADER64_instance = (IMAGE_NT_HEADERS64)FindObjectAddress(
-                IMAGE_NT_HEADER64_address,
-                IMAGE_NT_HEADER64_instance,
-                CurrentHandle);
+            IntPtr IMAGE_NT_HEADERS64_address = BaseAddress + IMAGE_DOS_HEADER_instance.e_lfanew;
+            IMAGE_NT_HEADERS64 IMAGE_NT_HEADERS64_instance = (IMAGE_NT_HEADERS64)Marshal.PtrToStructure(
+                IMAGE_NT_HEADERS64_address,
+                typeof(IMAGE_NT_HEADERS64));
 
-            IMAGE_DATA_DIRECTORY IMAGE_DATA_DIRECTORY_instance = IMAGE_NT_HEADER64_instance.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
-
+            IMAGE_DATA_DIRECTORY IMAGE_DATA_DIRECTORY_instance = IMAGE_NT_HEADERS64_instance.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+            
             IntPtr IMAGE_EXPORT_DIRECTORY_address = (IntPtr)(BaseAddress.ToInt64() + (int)IMAGE_DATA_DIRECTORY_instance.VirtualAddress);
-            IMAGE_EXPORT_DIRECTORY IMAGE_EXPORT_DIRECTORY_instance = new IMAGE_EXPORT_DIRECTORY();
-            IMAGE_EXPORT_DIRECTORY_instance = (IMAGE_EXPORT_DIRECTORY)FindObjectAddress(
-                IMAGE_EXPORT_DIRECTORY_address,
-                IMAGE_EXPORT_DIRECTORY_instance,
-                CurrentHandle);
+            IMAGE_EXPORT_DIRECTORY IMAGE_EXPORT_DIRECTORY_instance = (IMAGE_EXPORT_DIRECTORY)Marshal.PtrToStructure(
+                IMAGE_EXPORT_DIRECTORY_address, 
+                typeof(IMAGE_EXPORT_DIRECTORY));
 
-            // Console.WriteLine(IMAGE_EXPORT_DIRECTORY_instance.AddressOfNames);
-            // Console.WriteLine(ExportDirectoryRVA_address);
-            // Console.WriteLine(IMAGE_NT_HEADER64_instance.Signature);
-            // Console.WriteLine(IMAGE_NT_HEADER64_Address);
-            // Console.WriteLine(IMAGE_DOS_HEADER_instance.e_lfanew);
             return IMAGE_EXPORT_DIRECTORY_instance;
         }
 
