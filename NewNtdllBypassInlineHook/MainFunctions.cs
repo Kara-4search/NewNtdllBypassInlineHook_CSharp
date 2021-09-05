@@ -12,7 +12,7 @@ namespace NewNtdllBypassInlineHook
 {
     class MainFunctions
     {
-        private static Object Locate_Image_Export_Directory(IntPtr BaseAddress, IntPtr CurrentHandle)
+        private static Object Locate_Image_Export_Directory(IntPtr BaseAddress)
         {
             int IMAGE_DIRECTORY_ENTRY_EXPORT = 0;
 
@@ -38,12 +38,12 @@ namespace NewNtdllBypassInlineHook
         public static IntPtr Export_Function_Address(IntPtr BaseAddress, string FunctionName)
         {
 
-            IntPtr CurrentHandle = Process.GetCurrentProcess().Handle;
+            // IntPtr CurrentHandle = Process.GetCurrentProcess().Handle;
             // byte[] SyscallPrologue = new byte[4];
             // byte[] SyscallHead = new byte[4] { 0x4c, 0x8b, 0xd1, 0xb8 };
 
             IMAGE_EXPORT_DIRECTORY IMAGE_EXPORT_DIRECTORY_instance =
-                (IMAGE_EXPORT_DIRECTORY)Locate_Image_Export_Directory(BaseAddress, CurrentHandle);
+                (IMAGE_EXPORT_DIRECTORY)Locate_Image_Export_Directory(BaseAddress);
 
             IntPtr RVA_AddressOfFunctions = (IntPtr)(BaseAddress.ToInt64() + IMAGE_EXPORT_DIRECTORY_instance.AddressOfFunctions);
             IntPtr RVA_AddressOfNameOrdinals = (IntPtr)(BaseAddress.ToInt64() + IMAGE_EXPORT_DIRECTORY_instance.AddressOfNameOrdinals);
