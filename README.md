@@ -60,7 +60,7 @@ Blog link: working on it
 
 ## Update history
 - Restructure Code - 20210903
-- Remove unnecessary code in NativeFunctions.cs 20210906
+- Remove unnecessary code in NativeFunctions.cs - 20210906
 
 ## Reference link:
 	1. https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea
