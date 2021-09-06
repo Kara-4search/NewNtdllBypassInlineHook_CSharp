@@ -38,17 +38,5 @@ namespace NewNtdllBypassInlineHook
             uint dwFileOffsetLow,
             uint dwNumberOfBytesToMap);
 
-        [DllImport("kernel32.dll")]
-        public static extern void RtlZeroMemory(IntPtr pBuffer, int length);
-
-        [DllImport("ntdll.dll", SetLastError = true)]
-        public static extern Boolean NtReadVirtualMemory(
-            IntPtr ProcessHandle,
-            IntPtr BaseAddress,
-            IntPtr Buffer,
-            UInt32 NumberOfBytesToRead,
-            ref UInt32 liRet);
-
-
     }
 }
